@@ -1,0 +1,58 @@
+services:
+  web:
+    image: inventree_devcontainer-inventree
+    network_mode: "host"  # 使用主机的网络模式
+    # 由于使用了 host 网络模式，不需要再指定 ports 映射
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: inventree
+      MYSQL_USER: inventree_user
+      MYSQL_PASSWORD: inventree_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    expose:
+      - 3306/tcp
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:7.0
+    restart: always
+    expose:
+      - 6379
+
+  inventree:
+    build:
+      context: ..
+      dockerfile: ../InvenTree/contrib/container/Dockerfile
+      target: dev
+      args:
+        base_image: "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18"
+        data_dir: "dev"
+    volumes:
+      - ../:/home/inventree:z
+
+    environment:
+      INVENTREE_DEBUG: True
+      INVENTREE_DB_ENGINE: mysql
+      INVENTREE_DB_NAME: inventree
+      INVENTREE_DB_HOST: mysql
+      INVENTREE_DB_USER: inventree_user
+      INVENTREE_DB_PASSWORD: inventree_password
+      INVENTREE_CACHE_HOST: redis
+      INVENTREE_CACHE_PORT: 6379
+      INVENTREE_PLUGINS_ENABLED: True
+      INVENTREE_SITE_URL: http://192.168.80.254:8000
+      INVENTREE_CORS_ORIGIN_ALLOW_ALL: True
+      INVENTREE_PY_ENV: /home/inventree/dev/venv
+
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+    driver: local
