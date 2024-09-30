@@ -18,7 +18,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+        uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
       - name: Version Check
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
@@ -39,7 +39,7 @@ jobs:
       contents: write
       attestations: write
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
+      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # pin@v4.2.0
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -63,7 +63,7 @@ jobs:
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
         id: attest
-        uses: actions/attest-build-provenance@6149ea5740be74af77f260b9db67e633f6b0a9a1 # pin@v1
+        uses: actions/attest-build-provenance@1c608d11d69870c2092266b3f9a6f3abbf17002c # pin@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
 
